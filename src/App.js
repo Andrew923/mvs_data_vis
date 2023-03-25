@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './App.css';
 
 function update_filepath(path) {
@@ -10,12 +10,12 @@ function update_index(index) {
 }
 
 const styles = {
-  "font-family": "monaco, monospace",
-  "max-width": "300px",
+  "fontFamily": "monaco, monospace",
+  "maxWidth": "300px",
   "padding": "10px",
   "border": "none",
-  "border-radius": "10px",
-  "box-shadow": "0 0 5px rgba(0, 0, 0, 0.3)",
+  "borderRadius": "10px",
+  "boxShadow": "0 0 5px rgba(0, 0, 0, 0.3)",
   "cursor": "pointer",
   "transition": "transform 0.18s ease-in-out",
 };
@@ -31,6 +31,33 @@ function InputBox({ default_value, id}) {
   return (
     <input type="text" value={value} id={id} onChange={handleChange}
      style={styles}/>
+  );
+}
+
+function Dropdown({id}) {
+  const [selectedOption, setSelectedOption] = useState('');
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    fetch('https://mvs-data-vis.onrender.com/getoptions')
+      .then(response => response.json())
+      .then(data => setOptions(data.folders))
+      .catch(error => console.error(error));
+  }, []);
+
+  function handleOptionChange(event) {
+    setSelectedOption(event.target.value);
+  }
+
+  return (
+      <select id={id} style={styles} value={selectedOption} onChange={handleOptionChange}>
+        <option value="">Select an option</option>
+        {options.map(option => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
   );
 }
 
@@ -148,7 +175,7 @@ function App() {
       {/* BOTTOM HALF OF GUI*/}
       <div className="table">
         <div className="column2">
-          <InputBox default_value="image" id="image_path"/>
+          <Dropdown id="image_path"/>
           <Button onClick={() => update_filepath(document.getElementById("image_path").value)}>Enter</Button>
         </div>
         <div className="column2">
