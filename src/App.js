@@ -175,7 +175,7 @@ function App() {
   const [imagePath, setPath] = useState('');
   const inputRef = useRef(null);
 
-  const backend = "http://127.0.0.1:5000";
+  const backend = "https://mvs-data-vis.onrender.com/";
 
   function updateFilepath(path, index) {
     const url = `${backend}/${path}/${index}`;
