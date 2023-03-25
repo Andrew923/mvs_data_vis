@@ -1,13 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import './App.css';
-
-function update_filepath(path) {
-  console.log(path);
-}
-
-function update_index(index) {
-  console.log(index);
-}
 
 const styles = {
   "fontFamily": "monaco, monospace",
@@ -20,8 +12,19 @@ const styles = {
   "transition": "transform 0.18s ease-in-out",
 };
 
-function InputBox({ default_value, id}) {
-  const [value, setValue] = useState(default_value);
+const titleStyles = {
+  "fontFamily": "monaco, monospace",
+  "padding": "10px",
+  "border": "none",
+  "borderRadius": "10px",
+  "boxShadow": "0 0 5px rgba(0, 0, 0, 0.3)",
+  "cursor": "pointer",
+  display: 'flex', 
+  alignItems: 'center', 
+  justifyContent: 'center' 
+}
+
+function InputBox({ value, setValue, id, reference}) {
 
   const handleChange = (event) => {
     const newValue = event.target.value;
@@ -30,27 +33,26 @@ function InputBox({ default_value, id}) {
 
   return (
     <input type="text" value={value} id={id} onChange={handleChange}
-     style={styles}/>
+     ref={reference} style={styles}/>
   );
 }
 
-function Dropdown({id}) {
-  const [selectedOption, setSelectedOption] = useState('');
+function Dropdown({imagePath, setPath, id}) {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    fetch('https://mvs-data-vis.onrender.com/getoptions')
+    fetch('http://127.0.0.1:5000/getoptions')
       .then(response => response.json())
       .then(data => setOptions(data.folders))
       .catch(error => console.error(error));
   }, []);
 
   function handleOptionChange(event) {
-    setSelectedOption(event.target.value);
+    setPath(event.target.value);
   }
 
   return (
-      <select id={id} style={styles} value={selectedOption} onChange={handleOptionChange}>
+      <select id={id} style={styles} value={imagePath} onChange={handleOptionChange}>
         <option value="">Select an option</option>
         {options.map(option => (
           <option key={option} value={option}>
@@ -80,7 +82,7 @@ function Image(props) {
 
     if (relativeX >= 0 && relativeY >= 0 && relativeX < rect.width && relativeY < rect.height
         && rect.width > 50 && rect.height > 50) {
-      props.onMouseMove({ x: relativeX, y: relativeY, cx: relativeX, cy: e.clientY});
+      props.onMouseMove({ x: relativeX, y: relativeY, cx: e.clientX - rect.left, cy: e.clientY - rect.top});
     } 
     
   };
@@ -101,12 +103,15 @@ function Image(props) {
         }}
       />
       <p style={{
+          ...styles,
           position: "absolute",
           top: "0",
           left: "0",
           backgroundColor: "white",
           padding: "5px",
-          border: "1px solid black"
+          border: "1px solid black",
+          opacity: 0.8,
+          "pointerEvents": "none"
         }}
       >
         {`x: ${props.crosshairPosition.x}, y: ${props.crosshairPosition.y}`}
@@ -138,13 +143,15 @@ function ImageTable(props) {
     setCrosshairPosition(position);
   };
 
-  const images = props.images.map((image, index) => (
+  const array = props.images || [];
+
+  const images = array.map((image, index) => (
     <div key={index} className="column">
-      <Image src={image} onMouseMove={handleMouseMove} crosshairPosition={crosshairPosition}/>
+      <Image src={'data:image/jpeg;base64,' + image} onMouseMove={handleMouseMove} crosshairPosition={crosshairPosition}/>
     </div>
   ));
 
-  const numColumns = Math.min(props.images.length, 4);
+  const numColumns = Math.min(array.length, 4);
 
   const columnWidth = `${100 / numColumns}%`;
 
@@ -163,29 +170,65 @@ function ImageTable(props) {
 }
 
 function App() {
-  const images = [
-    "images/cam0/000000_Fisheye.png",
-    "images/cam1/000000_Fisheye.png",
-    "images/cam2/000000_Fisheye.png"
-  ]
+  const [images, setImages] = useState([]);
+  const [currIndex, setIndex] = useState('000000');
+  const [imagePath, setPath] = useState('');
+  const inputRef = useRef(null);
+
+  const backend = "http://127.0.0.1:5000";
+
+  function updateFilepath(path, index) {
+    const url = `${backend}/${path}/${index}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          setPath(path);
+          setImages(data.image_data);
+        })
+        .catch(error => console.error(error));
+  }
+
+  function updateIndex(newIndex, path) {
+    const url = `${backend}/indices/${path}`;
+    if (parseInt(newIndex) < 0) {return;}
+
+    const index = parseInt(newIndex).toString().padStart(6, '0');
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const min = data.minIndex;
+          const max = data.maxIndex;
+          if (parseInt(index) >= min && parseInt(index) <= max) {
+            setIndex(index);
+            updateFilepath(imagePath, currIndex);
+            inputRef.current.value = index;
+          }
+        })
+        .catch(error => console.error(error));    
+  }
+
   return (
     <div className="App">
+      <div style={titleStyles}>
+        <img src="icon.png" alt="Logo" style={{ height: 50, marginRight: 10 }} />
+        <h1>MVS Data Visualizer</h1>
+      </div>
       <ImageTable images={images} />
 
       {/* BOTTOM HALF OF GUI*/}
       <div className="table">
         <div className="column2">
-          <Dropdown id="image_path"/>
-          <Button onClick={() => update_filepath(document.getElementById("image_path").value)}>Enter</Button>
+          <Dropdown imagePath={imagePath} setPath={setPath} id="imagePath"/>
+          <Button onClick={() => updateFilepath(imagePath, currIndex)}>Enter</Button>
         </div>
         <div className="column2">
           <div style={{ display: "flex", flexDirection: "column" }}>
             <br></br>
-            <InputBox  default_value="000000" id="curr_index"/>
+            <InputBox value={currIndex} setValue = {setIndex} id="currIndex" reference={inputRef}/>
             <br></br>
             <div style={{ display: "flex", justifyContent: "space-between"}}>
-              <Button onClick={() => update_index(document.getElementById("curr_index").value)}>Previous</Button>
-              <Button onClick={() => update_index(document.getElementById("curr_index").value)}>Next</Button>
+              <Button onClick={() => updateIndex(parseInt(currIndex) - 1, imagePath)}>Previous</Button>
+              <Button onClick={() => updateIndex(parseInt(currIndex) + 1, imagePath)}>Next</Button>
             </div>
           </div>
         </div>
