@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef} from "react";
 import './App.css';
 
-const backend = "https://mvs-data-vis.onrender.com/";
+const backend = "https://mvs-data-vis.onrender.com";
 
 const styles = {
   "fontFamily": "monaco, monospace",
