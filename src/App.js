@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef} from "react";
 import './App.css';
 
+const backend = "https://mvs-data-vis.onrender.com/";
+
 const styles = {
   "fontFamily": "monaco, monospace",
   "maxWidth": "300px",
@@ -41,7 +43,7 @@ function Dropdown({imagePath, setPath, id}) {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/getoptions')
+    fetch(`${backend}/getoptions`)
       .then(response => response.json())
       .then(data => setOptions(data.folders))
       .catch(error => console.error(error));
@@ -174,8 +176,6 @@ function App() {
   const [currIndex, setIndex] = useState('000000');
   const [imagePath, setPath] = useState('');
   const inputRef = useRef(null);
-
-  const backend = "https://mvs-data-vis.onrender.com/";
 
   function updateFilepath(path, index) {
     const url = `${backend}/${path}/${index}`;
