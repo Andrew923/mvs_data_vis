@@ -1,4 +1,4 @@
-import React, { useState, useRef} from "react";
+import React, { useState, useEffect, useRef} from "react";
 import './App.css';
 import Button from "./components/Button.js";
 import Dropdown from "./components/Dropdown.js";
@@ -23,23 +23,53 @@ const titleStyles = {
 function App() {
   const [images, setImages] = useState([]);
   const [currIndex, setIndex] = useState('000000');
+  const [scenes, setScenes] = useState([]);
+  const [poses, setPoses] = useState([]);
   const [scene, setScene] = useState('');
   const [pose, setPose] = useState('');
   const inputRef = useRef(null);
 
-  function updateFilepath(scene, pose, index) {
-    const url = `${backend}/${scene}/${pose}/${index}`;
+  // Changes images when index changes
+  function updateFilepath(index) {
+    if (index < 0) return;
+    const newIndex = String(index).padStart(6, '0');
+    const url = `${backend}/${scene}/${pose}/${newIndex}`;
     fetch(url)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         if (!data.success) return;
-
-        setScene(scene);
-        setPose(pose);
+        setIndex(newIndex);
         setImages(data.image_data);
-      })
-      .catch(error => console.error(error));
+      }).catch(error => console.error(error));
   }
+
+  useEffect(() => {
+    fetch(`${backend}/getscenes`)
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) return;
+        setScenes(data.scenes);
+      }).catch(error => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    if (!scene) return;
+    fetch(`${backend}/getposes/${scene}`)
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) return;
+        setPoses(data.poses);
+      }).catch(error => console.error(error));
+  }, [scene]);
+
+  const changeScene = (event) => {
+    setScene(event.target.value);
+  };
+
+  const changePose = (event) => {
+    setPose(event.target.value);
+  };
 
   return (
     <div className="App">
@@ -52,8 +82,9 @@ function App() {
       {/* BOTTOM HALF OF GUI*/}
       <div className="table">
         <div className="column2">
-          <Dropdown imagePath={imagePath} setPath={setPath} id="imagePath"/>
-          <Button onClick={() => updateFilepath(scene, pose, currIndex)}>Go!</Button>
+          <Dropdown options={scenes} value={scene} onChange={changeScene} id="scene"/>
+          <Dropdown options={poses} value={pose} onChange={changePose} id="pose"/>
+          <Button onClick={() => updateFilepath(currIndex)}>Go!</Button>
         </div>
         <div className="column2">
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -61,8 +92,8 @@ function App() {
             <InputBox value={currIndex} setValue = {setIndex} id="currIndex" reference={inputRef}/>
             <br></br>
             <div style={{ display: "flex", justifyContent: "space-between"}}>
-              <Button onClick={() => updateFilepath(scene, pose, parseInt(currIndex) - 1)}>Previous</Button>
-              <Button onClick={() => updateFilepath(scene, pose, parseInt(currIndex) + 1)}>Next</Button>
+              <Button onClick={() => updateFilepath(parseInt(currIndex) - 1)}>Previous</Button>
+              <Button onClick={() => updateFilepath(parseInt(currIndex) + 1)}>Next</Button>
             </div>
           </div>
         </div>

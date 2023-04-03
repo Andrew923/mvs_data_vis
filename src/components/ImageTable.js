@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import Image from "./Image.js"
+import Image from "./Image.js";
 
 function ImageTable(props) {
     const [crosshairPosition, setCrosshairPosition] = useState({ x: 0, y: 0 });

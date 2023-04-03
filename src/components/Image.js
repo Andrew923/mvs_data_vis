@@ -1,5 +1,15 @@
 import React from "react";
-import styles from "../styles.js";
+
+const styles = {
+  "fontFamily": "monaco, monospace",
+  "maxWidth": "300px",
+  "padding": "10px",
+  "border": "none",
+  "borderRadius": "10px",
+  "boxShadow": "0 0 5px rgba(0, 0, 0, 0.3)",
+  "cursor": "pointer",
+  "transition": "transform 0.18s ease-in-out",
+};
 
 function Image(props) {
 
@@ -7,9 +17,8 @@ function Image(props) {
       const rect = e.target.getBoundingClientRect();
       const relativeX = e.clientX - rect.left;
       const relativeY = rect.bottom - e.clientY;
-  
       if (relativeX >= 0 && relativeY >= 0 && relativeX < rect.width && relativeY < rect.height
-          && rect.width > 50 && rect.height > 50) {
+          && rect.width === rect.height) {
         props.onMouseMove({ x: relativeX, y: relativeY, cx: e.clientX - rect.left, cy: e.clientY - rect.top});
       } 
       
@@ -38,6 +47,7 @@ function Image(props) {
         />
         <p style={{
             ...styles,
+            maxWidth: "100%",
             position: "relative",
             textAlign: "center",
             backgroundColor: "white",
@@ -47,7 +57,7 @@ function Image(props) {
             "pointerEvents": "none"
           }}
         >
-          {`x: ${props.crosshairPosition.x}, y: ${props.crosshairPosition.y}`}
+          {`Virtual x: ${props.crosshairPosition.x}, Virtual y: ${props.crosshairPosition.y}`}
         </p>
         <div style={{
             ...crosshair,
@@ -55,6 +65,7 @@ function Image(props) {
             left: 0,
             width: "100%",
             height: 1,
+            "pointerEvents": "none"
           }}>
         </div>
         <div style={{
