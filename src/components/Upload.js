@@ -9,6 +9,7 @@ function Upload({ onUpload, setUploaded }) {
     };
 
     const handleFileChange = (event) => {
+        setUploaded(false);
         const files = event.target.files;
         if (files.length > 0) {
             setUploaded(onUpload(files) === true);

@@ -7,8 +7,8 @@ import InputBox from "./components/InputBox.js";
 import Upload from "./components/Upload.js";
 import SendData from "./utils/sendData.js";
 
-export const backend = "http://localhost:9233";
-// export const backend = "https://mvs-data-vis.onrender.com";
+// export const backend = "http://localhost:9233";
+export const backend = "https://mvs-data-vis.fly.dev/";
 
 const titleStyles = {
   "fontFamily": "monaco, monospace",
@@ -74,10 +74,10 @@ function App() {
 
   //check if dataset is initially set
   useEffect(() => {
-    fetch(`${backend}`)
+    fetch(`${backend}/upload`)
       .then(response => response.json())
       .then(data => {
-        if (data.success) setUploaded(true);
+        setUploaded(data.success);
       }).catch(error => console.error(error));
   }, [])
 

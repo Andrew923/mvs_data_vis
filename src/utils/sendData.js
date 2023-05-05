@@ -11,7 +11,7 @@ function SendData(files) {
     }
   };
   appendFiles(files);
-  fetch(`${backend}`, {
+  fetch(`${backend}/upload`, {
     method: 'PUT',
     body: formData
   }).then(response => response.json())
