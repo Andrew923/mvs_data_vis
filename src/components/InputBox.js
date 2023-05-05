@@ -11,16 +11,23 @@ const styles = {
   "transition": "transform 0.18s ease-in-out",
 };
 
-function InputBox({ value, setValue, id, reference}) {
+function InputBox({ value, setValue, id, onChange}) {
 
     const handleChange = (event) => {
       const newValue = event.target.value;
       setValue(newValue);
     };
+
+    const handleKeyPress = (event) => {
+      if (event.key === "Enter") {
+        if (value.length !== 6) alert("Please enter a valid index");
+        else onChange(value);
+      }
+    }
   
     return (
       <input type="text" value={value} id={id} onChange={handleChange}
-       ref={reference} style={styles}/>
+       onKeyDown={handleKeyPress} style={styles}/>
     );
 }
 

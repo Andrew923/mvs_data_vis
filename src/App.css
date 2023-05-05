@@ -4,13 +4,13 @@
 }
 
 .column3 {
-  width: 33.33%;
+  width: calc(100% / 3);
   box-sizing: border-box;
   padding: 5px;
 }
 
-.column2 {
-  width: 50%;
+.bottomColumn {
+  width: calc(100% / 3);
   box-sizing: border-box;
   padding: 5px;
   display: flex;
