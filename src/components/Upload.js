@@ -1,24 +1,27 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import Button from "./Button.js"
 
 function Upload({ onUpload, setUploaded }) {
     const fileInputRef = useRef(null);
+    const [loading, setLoading] = useState(false);
 
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         setUploaded(false);
         const files = event.target.files;
         if (files.length > 0) {
-            setUploaded(onUpload(files) === true);
+            const success = await onUpload(files, setLoading)
+            setUploaded(success === true);
         } else console.log("No file selected");
     };
 
     return (
         <div>
-            <Button onClick={handleButtonClick}>Choose Data</Button>
+            {loading ? <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                :<Button onClick={handleButtonClick}>Choose Data</Button>}
             <input
                 type="file"
                 webkitdirectory="true"

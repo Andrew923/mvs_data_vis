@@ -1,6 +1,7 @@
 import { backend } from "../App.js";
 
-function SendData(files) {
+function SendData(files, setLoading) {
+  setLoading(true);
   const formData = new FormData();
   const appendFiles = (files, path = '') => {
     for (let i = 0; i < files.length; i++) {
@@ -19,7 +20,8 @@ function SendData(files) {
     console.log("Successful Upload");
     return true;
   }})
-  .catch(error => console.log(error));
+  .catch(error => console.log(error))
+  .finally(() => setLoading(false));
 }
 
 export default SendData;
