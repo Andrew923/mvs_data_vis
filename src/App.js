@@ -8,7 +8,7 @@ import Upload from "./components/Upload.js";
 import SendData from "./utils/sendData.js";
 
 // export const backend = "http://localhost:9233";
-export const backend = "https://mvs-data-vis.fly.dev/";
+export const backend = "http://34.145.175.29";
 
 const titleStyles = {
   "fontFamily": "monaco, monospace",
