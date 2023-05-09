@@ -14,6 +14,7 @@ function Upload({ onUpload, setUploaded }) {
         const files = event.target.files;
         if (files.length > 0) {
             const success = await onUpload(files, setLoading)
+            console.log(`Upload ${success}`);
             setUploaded(success === true);
         } else console.log("No file selected");
     };
