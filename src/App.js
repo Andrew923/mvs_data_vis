@@ -4,11 +4,11 @@ import Button from "./components/Button.js";
 import Dropdown from "./components/Dropdown.js";
 import ImageTable from "./components/ImageTable.js";
 import InputBox from "./components/InputBox.js";
-import Upload from "./components/Upload.js";
-import SendData from "./utils/sendData.js";
+// import Upload from "./components/Upload.js";
+// import SendData from "./utils/sendData.js";
 
-// export const backend = "http://localhost:9233";
-export const backend = "https://35.245.142.242";
+export const backend = "http://localhost:3001";
+// export const backend = "https://35.245.142.242";
 
 const titleStyles = {
   "fontFamily": "monaco, monospace",
@@ -32,7 +32,7 @@ function App() {
   const [scenes, setScenes] = useState([]);
   const [poses, setPoses] = useState([]);
   const [scene, setScene] = useState('');
-  const [pose, setPose] = useState('');
+  const [pose, setPose] = useState('Pose_000');
   const [upload, setUploaded] = useState(false);
 
   // Changes images when index changes
@@ -124,7 +124,7 @@ function App() {
           <Button onClick={() => updateFilepath(currIndex)}>Go!</Button>
         </div>
         <div className="bottomColumn">
-          <Upload onUpload={SendData} setUploaded={setUploaded}/>
+          {/* <Upload onUpload={SendData} setUploaded={setUploaded}/> */}
         </div>
         <div className="bottomColumn">
           <div style={{ display: "flex", flexDirection: "column" }}>

@@ -23,4 +23,4 @@ async function SendData(files, setLoading) {
   return success;
 }
 
-export default SendData;
+// export default SendData;

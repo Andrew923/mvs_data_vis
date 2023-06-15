@@ -34,4 +34,4 @@ function Upload({ onUpload, setUploaded }) {
     );
 }
 
-export default Upload;
+// export default Upload;

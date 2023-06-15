@@ -61,6 +61,8 @@ function Image(props) {
             {`Green x: ${props.crosshair.px}, y: ${props.crosshair.py}`}
             <br></br>
             {`Red x: ${Math.round(props.groundTruth.px)}, y: ${Math.round(props.groundTruth.py)}`}
+            <br></br>
+            {`Delta (Red - Green) x: ${Math.round(props.groundTruth.px - props.crosshair.px)}, y: ${Math.round(props.groundTruth.py - props.crosshair.py)}`}
             
           </p>
       </div>

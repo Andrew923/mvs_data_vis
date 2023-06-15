@@ -21,7 +21,7 @@ function transform(crosshair, camera, transformation, distance, bf, size) {
   // Valid rays are only those within the field of view
   if (!(Math.abs(ph) <= camera.fov_rad / 2.0)) return crosshair;
 
-  // Compute the 3D points, which are of unit length and scale by d
+  // Compute the 3D points, which are of unit length then scale by d
   const d = bf / distance[0][crosshair.px][crosshair.py];
 
   const x = d * Math.sin(ph) * Math.cos(th);
