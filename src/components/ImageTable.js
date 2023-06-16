@@ -19,15 +19,18 @@ function ImageTable({imageData, imageObjects, transformations, distances, bf}) {
 
       // Transformation matrix is from true index to current index
       const transformation = index !== trueIndex ? transformations[`${index}-${trueIndex}`] : null;
+      console.groupCollapsed(`${index}-${trueIndex}`);
       const truth = transformation ? 
         transform(crosshair, camera, transformation, 
           distances[index], bf, size) : crosshair;
+      console.groupEnd();
       
       return (
         <div key={index} className="column">
           <Image src={'data:image/jpeg;base64,' + data} onMouseMove={handleMouseMove} 
             crosshair={crosshair} fields={camera} id={index} setIndex={setIndex} 
-            groundTruth={truth} size={size} setSize={setSize}/>
+            groundTruth={truth} size={size} setSize={setSize} 
+            d={bf && index && distances && crosshair ? bf / distances[index][0][crosshair.py][crosshair.px] : null}/>
         </div>
       );
     });
